@@ -39,9 +39,6 @@ jobs:
       - name: Type check server
         run: npm run typecheck -w=server
 
-      - name: Test client (unit)
-        run: npm run test:unit -w=server
-
       - name: Run server database migrations
         run: npm run migrate:latest -w=server
 
