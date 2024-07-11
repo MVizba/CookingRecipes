@@ -1,0 +1,18 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["src/**/tests/*", "node_modules"],
+  "compilerOptions": {
+    "rootDir": "..",
+    "strict": true,
+    "composite": true,
+    "baseUrl": ".",
+    "preserveSymlinks": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@server/*": ["../server/src/*"]
+    }
+  }
+}

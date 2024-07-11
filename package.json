@@ -1,0 +1,10 @@
+{
+  "name": "mono",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ]
+}
