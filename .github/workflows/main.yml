@@ -1,39 +1,58 @@
 name: Test
 
-on:
-  push:
-    branches: [master, main]
-  pull_request:
-    branches: [master, main]
+on: push
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    env:
+      # variables for our front-end tests, see client/src/config.ts
+      VITE_API_ORIGIN: http://localhost:3000
+      VITE_API_PATH: /api/v1/trpc
 
-    strategy:
-      matrix:
-        node-version: 18
-
+      # variables for our back-end tests, see server/src/config.ts
+      DATABASE_URL: postgres://turing:turing@localhost:5432/testdb
+    services:
+      # spin up a database for tests
+      postgres:
+        image: postgres:16.1-alpine
+        env:
+          # Postgres will create a database with the following credentials
+          POSTGRES_USER: turing
+          POSTGRES_PASSWORD: turing
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: "20.14.0"
+          cache: "npm"
 
       - name: Install dependencies
-        run: |
-          cd server
-          npm install
+        run: npm ci
 
-      - name: Run tests
-        run: |
-          cd server
-          npm test
+      - name: Type check server
+        run: npm run typecheck -w=server
 
-      - name: Archive test results
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-results
-          path: server/test-results
+      - name: Type check client
+        run: npm run typecheck -w=client
 
+      - name: Lint server
+        run: npm run lint -w=server
+
+      - name: Lint client
+        run: npm run lint -w=client
+
+      - name: Test client (unit)
+        run: npm run test:unit -w=client
+
+      - name: Run server database migrations
+        run: npm run migrate:latest -w=server
+
+      - name: Test server
+        run: npm run test -w=server
