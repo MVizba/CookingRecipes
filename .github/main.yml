@@ -12,6 +12,7 @@ jobs:
 
       # variables for our back-end tests, see server/src/config.ts
       DATABASE_URL: postgres://turing:turing@localhost:5432/testdb
+      TOKEN_KEY: supersecretkey
     services:
       # spin up a database for tests
       postgres:
