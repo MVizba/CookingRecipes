@@ -9,29 +9,15 @@ const createCaller = createCallerFactory(userRouter)
 const userSeed = {
   id: 12345,
   email: 'existing@user.com',
-  // We could mock out the bcrypt though in this case it would
-  // make our tests a less readable. If we would need to perform
-  // lots of bcrypt calls, then we should consider mocking it out.
-  // Hash for 'password.123' (PASSWORD_CORRECT).
   password: '$2b$10$sD53fzWIQBjXWfSDzuwmMOyY1ZAygLpRZlLxxPhcNG5r9BFWrNaDC',
 }
 
-// Example using a mocked out db.
 const db = {
   getRepository: () => ({
     findOne: ({ where: { email } }: any) =>
       email === userSeed.email ? userSeed : null,
   }),
 }
-
-// The same mocked db, but with a more declarative utility function,
-// which is easier to work with if we would have multiple repositories.
-// const db = createMockDatabase({
-//   User: {
-//     findOne: ({ where: { email } }: any) =>
-//       email === userSeed.email ? userSeed : null,
-//   },
-// })
 
 const { login } = createCaller({ db } as any)
 
@@ -43,7 +29,6 @@ it('returns a token if the password matches', async () => {
     password: PASSWORD_CORRECT,
   })
 
-  // jwt
   expect(accessToken).toEqual(expect.any(String))
   expect(accessToken.slice(0, 3)).toEqual('eyJ')
 })
@@ -54,7 +39,7 @@ it('should throw an error for non-existant user', async () => {
       email: 'nonexisting@user.com',
       password: PASSWORD_CORRECT,
     })
-  ).rejects.toThrow() // some error
+  ).rejects.toThrow()
 })
 
 it('should throw an error for incorrect password', async () => {
@@ -96,7 +81,7 @@ it('allows logging in with different email case', async () => {
 it('allows logging in with surrounding white space', async () => {
   await expect(
     login({
-      email: ` \t ${userSeed.email}\t `, // tabs and spaces
+      email: ` \t ${userSeed.email}\t `,
       password: PASSWORD_CORRECT,
     })
   ).resolves.toEqual(expect.anything())
