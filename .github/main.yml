@@ -9,10 +9,10 @@ jobs:
       # variables for our front-end tests, see client/src/config.ts
       VITE_API_ORIGIN: http://localhost:3000
       VITE_API_PATH: /api/v1/trpc
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
+      DB_TYPE: ${{ secrets.DB_TYPE }}
 
-      # variables for our back-end tests, see server/src/config.ts
-      DATABASE_URL: postgres://turing:turing@localhost:5432/testdb
-      TOKEN_KEY: supersecretkey
     services:
       # spin up a database for tests
       postgres:
