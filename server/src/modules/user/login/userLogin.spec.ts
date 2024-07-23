@@ -1,5 +1,9 @@
 import { createCallerFactory } from '@server/trpc'
 import userRouter from '..'
+import jwt from 'jsonwebtoken'
+
+process.env.DB_TYPE = 'pg-mem'
+process.env.TOKEN_KEY = 'supersecretkey'
 
 const createCaller = createCallerFactory(userRouter)
 

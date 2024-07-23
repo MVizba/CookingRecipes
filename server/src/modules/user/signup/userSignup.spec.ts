@@ -4,6 +4,9 @@ import { fakeUser } from '@server/entities/tests/fakes'
 import { createCallerFactory } from '@server/trpc'
 import userRouter from '..'
 
+process.env.DB_TYPE = 'pg-mem'
+process.env.TOKEN_KEY = 'supersecretkey'
+
 const db = await createTestDatabase()
 const userRepository = db.getRepository(User)
 const createCaller = createCallerFactory(userRouter)
