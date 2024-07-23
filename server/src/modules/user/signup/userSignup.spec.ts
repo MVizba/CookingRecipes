@@ -5,7 +5,7 @@ import { createCallerFactory } from '@server/trpc'
 import userRouter from '..'
 
 process.env.DB_TYPE = 'pg-mem'
-process.env.TOKEN_KEY = 'supersecretkey'
+process.env.TOKEN_KEY = process.env.TOKEN_KEY || 'supersecretkey'
 
 const db = await createTestDatabase()
 const userRepository = db.getRepository(User)
