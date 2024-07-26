@@ -14,7 +14,7 @@ export default authenticatedProcedure
           userId: authUser.id,
         },
       },
-      relations: ['products'],
+      relations: ['product'],
     })
 
     if (!recipe) {

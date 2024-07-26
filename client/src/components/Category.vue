@@ -1,36 +1,45 @@
-<script lang="ts" setup>
-import { FwbButton } from 'flowbite-vue'
-import { useRouter } from 'vue-router'
+<script lang="ts">
+import { defineComponent, type PropType } from 'vue'
 import type { CategoryBare } from '@mono/server/src/shared/entities'
 
-const props = defineProps<{
-  category: CategoryBare
-  deleteCategory: (categoryId: number) => void
-}>()
-
-const router = useRouter()
-
-const handleDelete = () => {
-  props.deleteCategory(props.category.id)
-}
-
-const viewCategoryDetails = () => {
-  router.push({ name: 'CategoryView', params: { id: props.category.id } })
-}
+export default defineComponent({
+  props: {
+    category: {
+      type: Object as PropType<CategoryBare>,
+      required: true,
+    },
+  },
+})
 </script>
 
 <template>
-  <div
-    class="mb-6 flex items-center justify-between rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
-  >
-    <div>
-      <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-        {{ category.category_name }}
-      </h5>
-    </div>
-    <div>
-      <FwbButton @click="viewCategoryDetails" class="mr-2" size="sm">View Details</FwbButton>
-      <FwbButton @click="handleDelete" size="sm">Delete</FwbButton>
-    </div>
+  <div class="category flex items-center justify-between">
+    <h3 @click="$emit('viewCategory', category.id)" class="category-name">
+      {{ category.category_name }}
+    </h3>
+    <img
+      @click="$emit('confirmDeleteCategory', category.id)"
+      src="https://img.icons8.com/ios-glyphs/30/000000/trash.png"
+      alt="Delete"
+      class="cursor-pointer"
+      style="width: 20px; height: 20px"
+    />
   </div>
 </template>
+
+<style scoped>
+.category {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.category-name {
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+.category-name:hover {
+  color: rgb(120, 120, 124);
+}
+</style>

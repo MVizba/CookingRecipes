@@ -13,7 +13,7 @@ import { DataSource } from 'typeorm'
 
 const createCaller = createCallerFactory(productRouter)
 
-describe('Product Deletion Endpoint', () => {
+describe('Product Edit Endpoint', () => {
   let db: DataSource
 
   beforeAll(async () => {
@@ -24,7 +24,8 @@ describe('Product Deletion Endpoint', () => {
     await db.close()
   })
 
-  it('should delete a product successfully if it belongs to a recipe owned by the authenticated user', async () => {
+  it('should edit a product successfully if it belongs to a recipe owned by the authenticated user', async () => {
+    const db = await createTestDatabase()
     const user = await db.getRepository(User).save(fakeUser())
     const category = await db
       .getRepository(Category)
@@ -39,19 +40,27 @@ describe('Product Deletion Endpoint', () => {
     recipe.product = product
     await db.getRepository(Recipe).save(recipe)
 
-    const { delete: deleteProduct } = createCaller(authContext({ db }, user))
+    const { edit } = createCaller(authContext({ db }, user))
 
-    const result = await deleteProduct(product.id)
+    const updatedProductData = {
+      id: product.id,
+      cookingTime: 60,
+      product: 'Updated Product Ingredient',
+      instructions: 'Updated Instructions',
+    }
 
-    expect(result).toEqual({ success: true })
+    const editedProduct = await edit(updatedProductData)
 
-    const deletedProduct = await db
-      .getRepository(Product)
-      .findOne({ where: { id: product.id } })
-    expect(deletedProduct).toBeNull()
+    expect(editedProduct).toMatchObject({
+      id: product.id,
+      cookingTime: updatedProductData.cookingTime,
+      product: updatedProductData.product,
+      instructions: updatedProductData.instructions,
+    })
   })
 
   it('should throw an error if the product does not belong to a recipe owned by the authenticated user', async () => {
+    const db = await createTestDatabase()
     const user = await db.getRepository(User).save(fakeUser())
     const otherUser = await db.getRepository(User).save(fakeUser())
     const category = await db
@@ -67,10 +76,17 @@ describe('Product Deletion Endpoint', () => {
     recipe.product = product
     await db.getRepository(Recipe).save(recipe)
 
-    const { delete: deleteProduct } = createCaller(authContext({ db }, user))
+    const { edit } = createCaller(authContext({ db }, user))
 
-    await expect(deleteProduct(product.id)).rejects.toThrowError(
-      `Product with id ${product.id} was not found or does not belong to the authenticated user through recipe ownership`
+    const updatedProductData = {
+      id: product.id,
+      cookingTime: 60,
+      product: 'Updated Product Ingredient',
+      instructions: 'Updated Instructions',
+    }
+
+    await expect(edit(updatedProductData)).rejects.toThrowError(
+      `Product not found or does not belong to the authenticated user`
     )
   })
 })

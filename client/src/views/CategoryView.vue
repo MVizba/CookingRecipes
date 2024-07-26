@@ -2,13 +2,15 @@
 import { trpc } from '@/trpc'
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbAlert } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbAlert, FwbModal } from 'flowbite-vue'
 import type { CategoryBare, Recipe as RecipeType } from '@mono/server/src/shared/entities'
 
 const route = useRoute()
 const router = useRouter()
 const category = ref<(CategoryBare & { recipes: RecipeType[] }) | null>(null)
 const errorMessage = ref<string | null>(null)
+const showModal = ref(false)
+const recipeToDelete = ref<number | null>(null)
 
 const fetchCategory = async () => {
   try {
@@ -28,12 +30,20 @@ const createRecipe = () => {
   router.push({ name: 'RecipeCreate', params: { id: route.params.id } })
 }
 
-const deleteRecipe = async (recipeId: number) => {
-  try {
-    await trpc.recipe.delete.mutate(recipeId)
-    fetchCategory()
-  } catch (error) {
-    errorMessage.value = 'Error deleting recipe'
+const confirmDeleteRecipe = (recipeId: number) => {
+  recipeToDelete.value = recipeId
+  showModal.value = true
+}
+
+const deleteRecipe = async () => {
+  if (recipeToDelete.value !== null) {
+    try {
+      await trpc.recipe.delete.mutate(recipeToDelete.value)
+      fetchCategory()
+      showModal.value = false
+    } catch (error) {
+      errorMessage.value = 'Error deleting recipe'
+    }
   }
 }
 
@@ -55,23 +65,46 @@ onMounted(fetchCategory)
         <FwbHeading tag="h1" class="mb-0 !text-xl">
           {{ category.category_name }}
         </FwbHeading>
-        <FwbButton @click="createRecipe" class="ml-auto">Add Recipe</FwbButton>
+        <FwbButton @click="createRecipe" class="ml-auto">New Recipe</FwbButton>
       </div>
       <div v-if="category.recipes.length">
-        <div v-for="recipe in category.recipes" :key="recipe.id" class="recipe">
-          <h3>{{ recipe.recipe_name }}</h3>
-          <FwbButton @click="() => viewRecipe(recipe.id)" class="ml-auto">Instructions</FwbButton>
-          <FwbButton @click="() => deleteRecipe(recipe.id)" class="ml-2">Delete Recipe</FwbButton>
+        <div
+          v-for="recipe in category.recipes"
+          :key="recipe.id"
+          class="recipe flex items-center justify-between"
+        >
+          <h3 @click="viewRecipe(recipe.id)" class="recipe-name">{{ recipe.recipe_name }}</h3>
+          <img
+            @click="() => confirmDeleteRecipe(recipe.id)"
+            src="https://img.icons8.com/ios-glyphs/30/000000/trash.png"
+            alt="Delete"
+            class="cursor-pointer"
+            style="width: 20px; height: 20px"
+          />
         </div>
       </div>
       <div v-else>
         <FwbAlert>No recipes yet!</FwbAlert>
       </div>
-      <div><FwbButton @click="returnToDashboard">Return to Dashboard</FwbButton></div>
+      <div><FwbButton @click="returnToDashboard">Return</FwbButton></div>
     </div>
     <div v-else>
       <FwbAlert>{{ errorMessage }}</FwbAlert>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <FwbModal v-if="showModal" @close="showModal = false">
+      <template #header>
+        <h3 class="text-lg font-medium">Confirm Deletion</h3>
+      </template>
+      <template #body>
+        <p>Are you sure you want to delete this recipe?</p>
+      </template>
+      <template #footer>
+        <FwbButton @click="deleteRecipe">Yes</FwbButton>
+        <FwbButton @click="showModal = false" color="light">No</FwbButton>
+      </template>
+    </FwbModal>
   </div>
 </template>
 
@@ -81,5 +114,13 @@ onMounted(fetchCategory)
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
+}
+.recipe-name {
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+.recipe-name:hover {
+  color: rgb(146, 147, 145);
 }
 </style>

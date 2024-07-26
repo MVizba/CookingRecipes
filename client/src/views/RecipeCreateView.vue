@@ -13,9 +13,13 @@ const recipeForm = ref({
 })
 
 const createRecipe = async () => {
-  const newRecipe = await trpc.recipe.create.mutate(recipeForm.value)
-  console.log('Created new recipe:', newRecipe)
-  router.push({ name: 'CategoryView', params: { id: recipeForm.value.categoryId } })
+  try {
+    const newRecipe = await trpc.recipe.create.mutate(recipeForm.value)
+    console.log('Created new recipe:', newRecipe)
+    router.push({ name: 'CategoryView', params: { id: recipeForm.value.categoryId } })
+  } catch (error) {
+    console.error('Error creating recipe:', error)
+  }
 }
 </script>
 

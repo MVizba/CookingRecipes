@@ -4,7 +4,7 @@ import { trpc } from '@/trpc'
 const props = defineProps<{
   product: {
     id: number
-    name: string
+    cookingTime: number
     product: string
     instructions: string
   }
@@ -17,7 +17,7 @@ const deleteProduct = async () => {
 
 <template>
   <div class="product">
-    <h3>{{ props.product.name }}</h3>
+    <h3>Cooking Time: {{ props.product.cookingTime }} minutes</h3>
     <p>Ingredient: {{ props.product.product }}</p>
     <p>Instructions: {{ props.product.instructions }}</p>
     <button @click="deleteProduct">Delete</button>

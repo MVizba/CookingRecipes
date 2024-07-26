@@ -6,7 +6,7 @@ import { FwbButton, FwbHeading, FwbAlert } from 'flowbite-vue'
 import type { RecipeBare, Product as ProductType } from '@mono/server/src/shared/entities'
 
 interface RecipeWithProducts extends RecipeBare {
-  products: ProductType[]
+  product: ProductType | null
 }
 
 const route = useRoute()
@@ -24,12 +24,9 @@ const fetchRecipe = async () => {
   }
 }
 
-const deleteProduct = async (productId: number) => {
-  try {
-    await trpc.product.delete.mutate(productId)
-    fetchRecipe()
-  } catch (error) {
-    console.error('Error deleting product:', error)
+const editProduct = () => {
+  if (recipe.value && recipe.value.product) {
+    router.push({ name: 'ProductEdit', params: { productId: recipe.value.product.id } })
   }
 }
 
@@ -38,7 +35,9 @@ const addProduct = () => {
 }
 
 const returnToCategory = () => {
-  router.push({ name: 'CategoryView', params: { id: recipe.value?.categoryId } })
+  if (recipe.value) {
+    router.push({ name: 'CategoryView', params: { id: recipe.value.categoryId } })
+  }
 }
 
 onMounted(fetchRecipe)
@@ -50,14 +49,14 @@ onMounted(fetchRecipe)
       <FwbHeading tag="h1" class="mb-0 !text-xl">
         {{ recipe.recipe_name }}
       </FwbHeading>
-      <FwbButton @click="addProduct" class="ml-auto">Add Product</FwbButton>
+      <FwbButton @click="addProduct" class="ml-auto" v-if="!recipe.product">Add Product</FwbButton>
     </div>
-    <div v-if="recipe.products.length">
-      <div v-for="product in recipe.products" :key="product.id" class="product">
-        <h3>{{ product.name }}</h3>
-        <p>Ingredient: {{ product.product }}</p>
-        <p>Instructions: {{ product.instructions }}</p>
-        <FwbButton @click="() => deleteProduct(product.id)">Delete Product</FwbButton>
+    <div v-if="recipe.product">
+      <div class="product">
+        <h3>Cooking Time: {{ recipe.product.cookingTime }} minutes</h3>
+        <p>Ingredient: {{ recipe.product.product }}</p>
+        <p>Instructions: {{ recipe.product.instructions }}</p>
+        <FwbButton @click="editProduct">Edit Product</FwbButton>
       </div>
     </div>
     <div v-else>
@@ -66,6 +65,10 @@ onMounted(fetchRecipe)
     <div><FwbButton @click="returnToCategory">Return to Category</FwbButton></div>
   </div>
   <div v-else>
+    <div class="mb-4 flex flex-row">
+      <FwbHeading tag="h1" class="mb-0 !text-xl"> Recipe not found </FwbHeading>
+      <FwbButton @click="addProduct" class="ml-auto">Add Product</FwbButton>
+    </div>
     <FwbAlert>{{ errorMessage }}</FwbAlert>
   </div>
 </template>

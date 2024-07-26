@@ -23,7 +23,7 @@ it('should create a persisted product', async () => {
   const { create } = createCaller(authContext({ db }, user))
 
   const productCreated = await create({
-    name: 'Sample Product',
+    cookingTime: 45,
     product: 'Sample Ingredient',
     instructions: 'Sample Instructions',
     recipeId: recipe.id,
@@ -31,9 +31,9 @@ it('should create a persisted product', async () => {
 
   expect(productCreated).toMatchObject({
     id: expect.any(Number),
-    name: 'Sample Product',
+    cookingTime: 45,
     product: 'Sample Ingredient',
     instructions: 'Sample Instructions',
-    recipeId: recipe.id,
+    recipe: expect.any(Object),
   })
 })

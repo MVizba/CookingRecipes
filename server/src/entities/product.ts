@@ -1,5 +1,5 @@
 import { validates } from '@server/utils/validation'
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { z } from 'zod'
 import { Recipe } from './recipe'
 
@@ -8,14 +8,11 @@ export class Product {
   @PrimaryGeneratedColumn('increment')
   id: number
 
-  @Column('integer')
-  recipeId: number
-
-  @ManyToOne(() => Recipe, (recipe) => recipe.products)
+  @OneToOne(() => Recipe, (recipe) => recipe.product)
   recipe: Recipe
 
-  @Column('text')
-  name: string
+  @Column('integer')
+  cookingTime: number
 
   @Column('text')
   product: string
@@ -28,8 +25,7 @@ export type ProductBare = Omit<Product, 'recipe'>
 
 export const productSchema = validates<ProductBare>().with({
   id: z.number().int().positive(),
-  recipeId: z.number().positive(),
-  name: z.string().trim(),
+  cookingTime: z.number().int().positive(),
   product: z.string().trim(),
   instructions: z.string().trim(),
 })

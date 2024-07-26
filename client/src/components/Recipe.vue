@@ -18,7 +18,7 @@ const fetchRecipe = async () => {
     console.log('Fetched recipe:', fetchedRecipe)
     recipe.value = fetchedRecipe
   } catch (error) {
-    errorMessage.value = 'Recipe not foundddddd'
+    errorMessage.value = 'Recipe not found'
     console.error('Error fetching recipe:', error)
   }
 }

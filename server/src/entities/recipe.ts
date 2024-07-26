@@ -3,8 +3,9 @@ import {
   Column,
   Entity,
   ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
+  JoinColumn,
 } from 'typeorm'
 import { z } from 'zod'
 import { Product } from './product'
@@ -24,13 +25,15 @@ export class Recipe {
   @Column('text')
   recipe_name: string
 
-  @OneToMany(() => Product, (product) => product.recipe, {
+  @OneToOne(() => Product, (product) => product.recipe, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
-  products: Product[]
+  @JoinColumn()
+  product: Product
 }
 
-export type RecipeBare = Omit<Recipe, 'category' | 'products'>
+export type RecipeBare = Omit<Recipe, 'category' | 'product'>
 
 export const recipeSchema = validates<RecipeBare>().with({
   id: z.number().int().positive(),

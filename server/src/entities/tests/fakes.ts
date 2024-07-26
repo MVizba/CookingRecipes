@@ -51,8 +51,7 @@ export const fakeProduct = <T extends Partial<Product>>(
   overrides: T = {} as T
 ) => ({
   id: randomId(),
-  recipeId: randomId(),
-  name: random.string(),
+  cookingTime: random.integer({ min: 5, max: 120 }),
   product: random.string(),
   instructions: random.sentence(),
   ...overrides,
