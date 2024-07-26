@@ -13,6 +13,7 @@ const route = useRoute()
 const router = useRouter()
 const recipe = ref<RecipeWithProducts | null>(null)
 const errorMessage = ref<string | null>(null)
+const showModal = ref(false)
 
 const fetchRecipe = async () => {
   try {
@@ -26,7 +27,12 @@ const fetchRecipe = async () => {
 
 const editProduct = () => {
   if (recipe.value && recipe.value.product) {
-    router.push({ name: 'ProductEdit', params: { productId: recipe.value.product.id } })
+    router.push({
+      name: 'ProductEdit',
+      params: { recipeId: recipe.value.id, productId: recipe.value.product.id },
+    })
+  } else {
+    console.log('Product not found or recipe is null')
   }
 }
 

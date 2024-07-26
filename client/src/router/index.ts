@@ -38,13 +38,13 @@ const router = createRouter({
           component: () => import('../views/RecipeView.vue'),
         },
         {
-          path: 'recipe/:id/product/create',
+          path: 'recipe/:recipeId/product/create',
           name: 'ProductCreate',
           component: () => import('../views/ProductCreateView.vue'),
         },
         {
-          path: 'recipe/:recipeId/product/create',
-          name: 'ProductCreate',
+          path: 'recipe/:recipeId/product/:productId/edit',
+          name: 'ProductEdit',
           component: () => import('../views/ProductCreateView.vue'),
         },
       ],
