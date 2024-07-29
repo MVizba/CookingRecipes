@@ -19,7 +19,9 @@ export class Recipe {
   @Column('integer')
   categoryId: number
 
-  @ManyToOne(() => Category, (category) => category.recipes)
+  @ManyToOne(() => Category, (category) => category.recipes, {
+    onDelete: 'CASCADE',
+  })
   category: Category
 
   @Column('text')
