@@ -71,12 +71,11 @@ onMounted(fetchCategories)
         <div class="space-y-6">
           <FwbInput v-model="categoryForm.category_name" label="Category Name" required />
           <AlertError :message="errorMessage" />
-          <FwbButton type="submit" size="xl">Add a new category</FwbButton>
+          <FwbButton type="submit">Add a new category</FwbButton>
         </div>
       </form>
     </div>
 
-    <!-- Confirmation Modal -->
     <FwbModal v-if="showModal" @close="showModal = false">
       <template #header>
         <h3 class="text-lg font-medium">Confirm Deletion</h3>

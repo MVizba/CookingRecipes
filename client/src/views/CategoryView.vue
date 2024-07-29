@@ -92,7 +92,6 @@ onMounted(fetchCategory)
       <FwbAlert>{{ errorMessage }}</FwbAlert>
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <FwbModal v-if="showModal" @close="showModal = false">
       <template #header>
         <h3 class="text-lg font-medium">Confirm Deletion</h3>

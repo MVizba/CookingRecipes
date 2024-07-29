@@ -13,7 +13,6 @@ const route = useRoute()
 const router = useRouter()
 const recipe = ref<RecipeWithProducts | null>(null)
 const errorMessage = ref<string | null>(null)
-const showModal = ref(false)
 
 const fetchRecipe = async () => {
   try {
@@ -59,9 +58,22 @@ onMounted(fetchRecipe)
     </div>
     <div v-if="recipe.product">
       <div class="product">
-        <h3>Cooking Time: {{ recipe.product.cookingTime }} minutes</h3>
-        <p>Ingredient: {{ recipe.product.product }}</p>
-        <p>Instructions: {{ recipe.product.instructions }}</p>
+        <div class="mb-2 flex items-center">
+          <img
+            src="https://img.icons8.com/ios-glyphs/30/000000/clock--v1.png"
+            alt="Cooking Time"
+            class="clock-icon"
+          />
+          <h3 class="ml-2">{{ recipe.product.cookingTime }} minutes</h3>
+        </div>
+        <p class="bold">Ingredients:</p>
+        <ul class="ingredients-list">
+          <li v-for="ingredient in recipe.product.product.split(', ')" :key="ingredient">
+            {{ ingredient }}
+          </li>
+        </ul>
+        <p class="bold">Instructions:</p>
+        <p class="instructions">{{ recipe.product.instructions }}</p>
         <FwbButton @click="editProduct">Edit Product</FwbButton>
       </div>
     </div>
@@ -85,5 +97,27 @@ onMounted(fetchRecipe)
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
+}
+.clock-icon {
+  width: 20px;
+  height: 20px;
+}
+.bold {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.ingredients-list {
+  margin-bottom: 15px;
+}
+.instructions {
+  white-space: pre-wrap;
+  border: 1px solid #dddddd00;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f3f4f6;
+  margin-bottom: 15px;
+}
+.mb-4 {
+  margin-bottom: 20px;
 }
 </style>
