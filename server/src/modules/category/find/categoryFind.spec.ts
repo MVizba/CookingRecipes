@@ -1,3 +1,4 @@
+import { DataSource } from 'typeorm'
 import { authContext } from '@tests/utils/context'
 import { Category, User } from '@server/entities'
 import { fakeCategory, fakeUser } from '@server/entities/tests/fakes'
@@ -7,9 +8,18 @@ import categoryRouter from '..'
 
 const createCaller = createCallerFactory(categoryRouter)
 
-it('should return a list of categories'),
-  async () => {
-    const db = await createTestDatabase()
+describe('Category Router', () => {
+  let db: DataSource
+
+  beforeAll(async () => {
+    db = await createTestDatabase()
+  })
+
+  afterAll(async () => {
+    await db.destroy()
+  })
+
+  it('should return a list of categories', async () => {
     const [user, userOther] = await db
       .getRepository(User)
       .save([fakeUser(), fakeUser()])
@@ -28,8 +38,7 @@ it('should return a list of categories'),
     expect(userCategory[0]).toMatchObject({
       id: expect.any(Number),
       userId: user.id,
-
-      user: undefined,
-      category_name: undefined,
+      category_name: expect.any(String),
     })
-  }
+  })
+})

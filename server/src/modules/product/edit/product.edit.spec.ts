@@ -8,8 +8,8 @@ import {
 import { createTestDatabase } from '@tests/utils/database'
 import { User, Category, Recipe, Product } from '@server/entities'
 import { createCallerFactory } from '@server/trpc'
-import productRouter from '..'
 import { DataSource } from 'typeorm'
+import productRouter from '..'
 
 const createCaller = createCallerFactory(productRouter)
 
@@ -24,8 +24,7 @@ describe('Product Edit Endpoint', () => {
     await db.close()
   })
 
-  it('should edit a product successfully if it belongs to a recipe owned by the authenticated user', async () => {
-    const db = await createTestDatabase()
+  it('should edit a product successfully if it belongs to a recipe owned by user', async () => {
     const user = await db.getRepository(User).save(fakeUser())
     const category = await db
       .getRepository(Category)
@@ -60,7 +59,6 @@ describe('Product Edit Endpoint', () => {
   })
 
   it('should throw an error if the product does not belong to a recipe owned by the authenticated user', async () => {
-    const db = await createTestDatabase()
     const user = await db.getRepository(User).save(fakeUser())
     const otherUser = await db.getRepository(User).save(fakeUser())
     const category = await db

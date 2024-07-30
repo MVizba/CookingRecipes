@@ -2,6 +2,7 @@ import { Product, productSchema } from '@server/entities/product'
 import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 import provideRepos from '@server/trpc/provideRepos'
 import { TRPCError } from '@trpc/server'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { z } from 'zod'
 
 const editProductSchema = productSchema.pick({

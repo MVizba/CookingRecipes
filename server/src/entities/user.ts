@@ -31,11 +31,6 @@ export type UserBare = Omit<User, 'categories'>
 
 export const userSchema = validates<UserBare>().with({
   id: z.number().int().positive(),
-
-  // We will trim and lowercase all emails, otherwise
-  // lots of users will be frustrated when they try to
-  // log in with "email@example" while they have
-  // registered with "Email@example.com".
   email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8).max(64),
 })
