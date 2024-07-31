@@ -23,6 +23,6 @@ export default authenticatedProcedure
         message: `Recipe was not found`,
       })
     }
-    console.log(recipe)
+
     return recipe
   })

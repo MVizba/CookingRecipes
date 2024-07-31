@@ -9,7 +9,7 @@ export default authenticatedProcedure
   .query(async ({ input: categoryId, ctx: { authUser, repos } }) => {
     const category = await repos.Category.findOne({
       where: { id: categoryId, userId: authUser.id },
-      relations: ['recipes'],
+      relations: ['recipes', 'recipes.product'],
     })
 
     if (!category) {

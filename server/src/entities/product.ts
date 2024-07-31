@@ -1,6 +1,6 @@
-import { validates } from '@server/utils/validation'
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
 import { z } from 'zod'
+import { validates } from '@server/utils/validation'
 import { Recipe } from './recipe'
 
 @Entity()
@@ -19,6 +19,9 @@ export class Product {
 
   @Column('text')
   instructions: string
+
+  @Column('text', { nullable: true })
+  url?: string
 }
 
 export type ProductBare = Omit<Product, 'recipe'>
@@ -28,6 +31,7 @@ export const productSchema = validates<ProductBare>().with({
   cookingTime: z.number().int().positive(),
   product: z.string().trim(),
   instructions: z.string().trim(),
+  url: z.string().trim().url().optional(),
 })
 
 export const productInsertSchema = productSchema.omit({ id: true })

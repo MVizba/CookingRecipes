@@ -16,6 +16,7 @@ const productForm = ref({
   ingredients: [''] as string[],
   instructions: '',
   recipeId: recipeId,
+  url: '',
 })
 
 const [saveProduct, errorMessage] = useErrorMessage(async () => {
@@ -25,6 +26,7 @@ const [saveProduct, errorMessage] = useErrorMessage(async () => {
     product: productForm.value.ingredients.filter(Boolean).join(', '),
     instructions: productForm.value.instructions,
     recipeId: recipeId,
+    url: productForm.value.url || undefined,
   }
 
   if (productId) {
@@ -43,6 +45,7 @@ const fetchProduct = async () => {
       ingredients: productData.product.split(', ').concat(''),
       instructions: productData.instructions,
       recipeId: recipeId,
+      url: productData.url || '',
     }
   }
 }
@@ -92,6 +95,7 @@ onMounted(fetchProduct)
         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         required
       ></textarea>
+      <FwbInput v-model="productForm.url" label="Image URL (optional)" type="text" />
       <FwbButton type="submit">Save</FwbButton>
     </form>
   </div>

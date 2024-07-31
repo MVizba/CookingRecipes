@@ -50,21 +50,30 @@ onMounted(fetchRecipe)
 
 <template>
   <div v-if="recipe">
-    <div class="mb-4 flex flex-row">
+    <div class="mb-4">
       <FwbHeading tag="h1" class="mb-0 !text-xl">
         {{ recipe.recipe_name }}
       </FwbHeading>
-      <FwbButton @click="addProduct" class="ml-auto" v-if="!recipe.product">Add Product</FwbButton>
+      <div class="mt-2 flex items-center">
+        <img
+          src="https://img.icons8.com/ios-glyphs/30/000000/clock--v1.png"
+          alt="Cooking Time"
+          class="clock-icon"
+        />
+        <h3 class="ml-2">{{ recipe.product?.cookingTime }} min.</h3>
+      </div>
+      <FwbButton @click="addProduct" class="ml-auto mt-4" v-if="!recipe.product"
+        >Add Product</FwbButton
+      >
     </div>
     <div v-if="recipe.product">
       <div class="product">
-        <div class="mb-2 flex items-center">
+        <div v-if="recipe.product.url" class="mb-2">
           <img
-            src="https://img.icons8.com/ios-glyphs/30/000000/clock--v1.png"
-            alt="Cooking Time"
-            class="clock-icon"
+            :src="recipe.product.url || 'https://img.icons8.com/ios-glyphs/30/000000/no-image.png'"
+            alt="Product Image"
+            class="product-image"
           />
-          <h3 class="ml-2">{{ recipe.product.cookingTime }} minutes</h3>
         </div>
         <p class="bold">Ingredients:</p>
         <ul class="ingredients-list">
@@ -116,6 +125,10 @@ onMounted(fetchRecipe)
   padding: 10px;
   background-color: #f3f4f6;
   margin-bottom: 15px;
+}
+.product-image {
+  width: 300px;
+  height: 190px;
 }
 .mb-4 {
   margin-bottom: 20px;

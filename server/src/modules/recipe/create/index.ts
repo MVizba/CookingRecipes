@@ -24,7 +24,7 @@ export default authenticatedProcedure
 
     const recipe = {
       ...recipeData,
-      category: category,
+      category,
     }
 
     const recipeCreated = await repos.Recipe.save(recipe)

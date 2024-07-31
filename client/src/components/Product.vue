@@ -7,6 +7,7 @@ const props = defineProps<{
     cookingTime: number
     product: string
     instructions: string
+    url?: string
   }
 }>()
 
@@ -20,6 +21,11 @@ const deleteProduct = async () => {
     <h3>Cooking Time: {{ props.product.cookingTime }} minutes</h3>
     <p>Ingredient: {{ props.product.product }}</p>
     <p>Instructions: {{ props.product.instructions }}</p>
+    <img
+      :src="props.product.url || 'https://img.icons8.com/ios-glyphs/30/000000/no-image.png'"
+      alt="Product Image"
+      class="product-image"
+    />
     <button @click="deleteProduct">Delete</button>
   </div>
 </template>
@@ -30,5 +36,9 @@ const deleteProduct = async () => {
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 4px;
+}
+.product-image {
+  width: 20px;
+  height: 20px;
 }
 </style>

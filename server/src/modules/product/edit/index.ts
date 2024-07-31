@@ -2,21 +2,20 @@ import { Product, productSchema } from '@server/entities/product'
 import { authenticatedProcedure } from '@server/trpc/authenticatedProcedure'
 import provideRepos from '@server/trpc/provideRepos'
 import { TRPCError } from '@trpc/server'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { z } from 'zod'
 
 const editProductSchema = productSchema.pick({
   id: true,
   cookingTime: true,
   product: true,
   instructions: true,
+  url: true,
 })
 
 export default authenticatedProcedure
   .use(provideRepos({ Product }))
   .input(editProductSchema)
   .mutation(async ({ input, ctx: { authUser, repos } }) => {
-    const { id, cookingTime, product, instructions } = input
+    const { id, cookingTime, product, instructions, url } = input
 
     const existingProduct = await repos.Product.findOne({
       where: {
@@ -41,6 +40,7 @@ export default authenticatedProcedure
     existingProduct.cookingTime = cookingTime
     existingProduct.product = product
     existingProduct.instructions = instructions
+    existingProduct.url = url
 
     await repos.Product.save(existingProduct)
 
