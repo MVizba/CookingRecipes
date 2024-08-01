@@ -11,6 +11,7 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
       DB_TYPE: ${{ secrets.DB_TYPE }}
+      BASE_URL: http://localhost:5173
 
     services:
       postgres:
@@ -21,6 +22,7 @@ jobs:
           POSTGRES_DB: testdb
         ports:
           - 5432:5432
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -43,5 +45,11 @@ jobs:
       - name: Test server (unit)
         run: npm run test -w=server
 
-      - name: Test server
-        run: npm run test -w=server
+      - name: Build the server and client
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
