@@ -45,4 +45,4 @@ export async function loginNewUser(page: Page, userLogin = fakeUser()) {
   return userLogin
 }
 
-export const reportBug = trpc.category.report.mutate
+// export const createRecipe = trpc.category.report.mutate
