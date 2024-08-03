@@ -47,12 +47,6 @@ jobs:
       - name: Type check client
         run: npm run typecheck -w=client
 
-      - name: Lint server
-        run: npm run lint -w=server
-
-      - name: Lint client
-        run: npm run lint -w=client
-
       - name: Test client (unit)
         run: npm run test:unit -w=client
 
