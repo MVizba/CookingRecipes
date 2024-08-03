@@ -47,10 +47,22 @@ jobs:
       - name: Type check client
         run: npm run typecheck -w=client
 
-      - name: Build the server and client
-        run: npm run build
+      - name: Lint server
+        run: npm run lint -w=server
 
-      - name: Install Playwright browsers
+      - name: Lint client
+        run: npm run lint -w=client
+
+      - name: Test client (unit)
+        run: npm run test:unit -w=client
+
+      - name: Run server database migrations
+        run: npm run migrate:latest -w=server
+
+      - name: Test server
+        run: npm run test -w=server
+
+      - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
       - name: Start server for E2E tests
