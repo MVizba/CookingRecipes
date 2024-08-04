@@ -8,16 +8,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      // Assuming you have a setup to share types or utilities
       '@shared': path.resolve(__dirname, '../shared'),
     },
   },
   build: {
     rollupOptions: {
-      external: [
-        // Externalize server-only modules here
-        '@server/utils/validation',
-      ],
+      external: ['@server/utils/validation'],
     },
   },
 })
