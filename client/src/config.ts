@@ -1,5 +1,5 @@
-export const apiOrigin = import.meta.env.VITE_API_ORIGIN as string
-export const apiPath = import.meta.env.VITE_API_PATH as string
+export const apiOrigin = (import.meta.env.VITE_API_ORIGIN as string) || window.location.origin
+export const apiPath = (import.meta.env.VITE_API_PATH as string) || '/api/v1/trpc'
 export const apiBase = `${apiOrigin}${apiPath}`
 
 if (typeof apiOrigin !== 'string') {

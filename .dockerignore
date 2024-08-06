@@ -1,0 +1,26 @@
+# Common directories to ignore
+**/node_modules/
+**/dist/
+**/.git/
+**/.vscode/
+**/.idea/
+**/.DS_Store
+**/*.log
+
+# Test reports
+**/*.map
+**/coverage/
+**/cypress/
+**/playwright-report/
+
+# Environment files
+**/.env
+
+# Development-specific files
+**/*.md
+**/Dockerfile*
+**/docker-compose*
+
+# Temporary files
+**/tmp
+**/temp

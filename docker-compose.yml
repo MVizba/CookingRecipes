@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16.1-alpine
+    environment:
+      POSTGRES_USER: marius.viz
+      POSTGRES_PASSWORD: undefined
+      POSTGRES_DB: development
+    ports:
+      - "5432:5432"
+    volumes:
+      - recipes-db:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: .
+      dockerfile: ./server/Dockerfile
+    env_file:
+      - ./server/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+  client:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile
+    environment:
+      API_PROXY_PASS: http://server:3000
+    ports:
+      - "3001:80"
+    depends_on:
+      - server
+    env_file:
+      - ./client/.env
+
+volumes:
+  recipes-db:
