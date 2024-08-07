@@ -28,9 +28,7 @@ const schema = z
       passwordCost: z.coerce.number().default(isDevTest ? 6 : 12),
     }),
 
-    // we can pass in either a real database config or a in-memory database config
     database: z.discriminatedUnion('type', [
-      // real database config
       z.object({
         type: z.enum(['postgres', 'mysql']).default('postgres'),
 
@@ -40,13 +38,11 @@ const schema = z
         username: z.string(),
         password: z.string(),
 
-        // By default, log and synchronize the database schema only for tests and development.
         ssl: z.preprocess(coerceBoolean, z.boolean().default(!isDevTest)),
         logging: z.preprocess(coerceBoolean, z.boolean().default(isDevTest)),
         synchronize: z.preprocess(coerceBoolean, z.boolean().default(true)),
       }),
 
-      // in-memory database config
       z.object({
         type: z.literal('pg-mem'),
       }),
@@ -72,6 +68,7 @@ const config = schema.parse({
     database: env.DB_NAME,
     username: env.DB_USER,
     password: env.DB_PASSWORD,
+    ssl: env.DB_SSL,
     logging: env.DB_LOGGING,
     synchronize: env.DB_SYNC,
   },
@@ -79,7 +76,6 @@ const config = schema.parse({
 
 export default config
 
-// utility functions
 function coerceBoolean(value: unknown) {
   if (typeof value === 'string') {
     return value === 'true' || value === '1'
