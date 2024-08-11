@@ -20,7 +20,7 @@ RUN rm /usr/share/nginx/html/* -rf
 
 COPY --from=builder /app/client/dist /usr/share/nginx/html
 
-ENV NGINX_ENVSUBST_OUTPUT_DIR='/etc/nginx/conf.d'
+ENV NGINX_ENVSUBST_OUTPUT_DIR '/etc/nginx/conf.d'
 
 COPY client/nginx/default.conf.template /etc/nginx/templates/default.conf.template
 

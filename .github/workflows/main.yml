@@ -78,3 +78,110 @@ jobs:
           name: playwright-report
           path: client/playwright-report/
           retention-days: 7
+
+  build-deploy:
+    needs: test
+    runs-on: ubuntu-22.04
+    if: github.ref == 'refs/heads/main'
+    env:
+      CLIENT_IMAGE_TAG: client-${{ github.sha }}
+      SERVER_IMAGE_TAG: server-${{ github.sha }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup aws lightsail cli
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
+          which aws
+          aws --version
+          sudo curl "https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl" -o "/usr/local/bin/lightsailctl"
+          sudo chmod +x /usr/local/bin/lightsailctl
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build server image
+        run: >-
+          docker build
+          -t $SERVER_IMAGE_TAG
+          -f ./server/Dockerfile .
+
+      - name: Build client image
+        run: >-
+          docker build
+          -t $CLIENT_IMAGE_TAG
+          -f ./client/Dockerfile .
+
+      - name: Push server image
+        run: >-
+          aws lightsail push-container-image
+          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }}
+          --label $SERVER_IMAGE_TAG
+          --image $SERVER_IMAGE_TAG
+          --output yaml
+
+      - name: Push client image
+        run: >-
+          aws lightsail push-container-image
+          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }}
+          --label $CLIENT_IMAGE_TAG
+          --image $CLIENT_IMAGE_TAG
+          --output yaml
+
+      - name: Get Lightsail image tag
+        run: |
+          aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image'
+          echo "LIGHTSAIL_SERVER_IMAGE=$(aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$SERVER_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+          echo "LIGHTSAIL_CLIENT_IMAGE=$(aws lightsail get-container-images --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} | jq -r '.containerImages[] | select(.image | contains(".'$CLIENT_IMAGE_TAG'")) | .image')" >> $GITHUB_ENV
+
+      - name: Create containers.json
+        run: |
+          echo '{
+            "client": {
+              "image": "${{ env.LIGHTSAIL_CLIENT_IMAGE }}",
+              "command": [],
+              "ports": {
+                "80": "HTTP"
+              },
+              "environment": {
+                "API_PROXY_PASS": "http://localhost:3000"
+              }
+            },
+            "server": {
+              "image": "${{ env.LIGHTSAIL_SERVER_IMAGE }}",
+              "ports": {
+                "3000": "HTTP"
+              },
+              "environment": {
+                "NODE_ENV": "production",
+                "PORT": "3000",
+                "DATABASE_URL": "${{ secrets.PROD_DATABASE_URL }}",
+                "TOKEN_KEY": "${{ secrets.PROD_TOKEN_KEY }}"
+              }
+            }
+          }' > containers.json
+
+      - name: Create public-endpoint.json file
+        run: |
+          echo '{
+            "containerName": "client",
+            "containerPort": 80,
+            "healthCheck": {
+              "intervalSeconds": 10,
+              "path": "/api/health"
+            }
+          }' > public-endpoint.json
+
+      - name: Deploy to AWS Lightsail
+        run: |
+          aws lightsail create-container-service-deployment \
+          --service-name ${{ vars.AWS_LIGHTSAIL_SERVICE }} \
+          --containers file://containers.json \
+          --public-endpoint file://public-endpoint.json
