@@ -1,0 +1,8 @@
+{
+  "containerName": "client",
+  "containerPort": 80,
+  "healthCheck": {
+    "intervalSeconds": 15,
+    "path": "/api/health"
+  }
+}
