@@ -8,9 +8,6 @@ jobs:
     env:
       VITE_API_ORIGIN: http://localhost:3000
       VITE_API_PATH: /api/v1/trpc
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
-      DB_TYPE: ${{ secrets.DB_TYPE }}
 
     services:
       postgres:
