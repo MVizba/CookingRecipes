@@ -47,3 +47,5 @@ export const categoryInsertSchema = categorySchema.omit({
 })
 
 export type CategoryInsert = z.infer<typeof categoryInsertSchema>
+
+/* Just a commet to run a CI/CD */
