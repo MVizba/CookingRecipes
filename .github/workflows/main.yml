@@ -1,4 +1,4 @@
-name: Test
+name: Test and Deploy
 
 on: push
 
@@ -10,7 +10,6 @@ jobs:
       VITE_API_PATH: /api/v1/trpc
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
-      DB_TYPE: ${{ secrets.DB_TYPE }}
 
     services:
       postgres:
