@@ -17,7 +17,7 @@
     "migration:run": "npm run typeorm migration:run -- -d ./src/database/cli/dataSource.ts",
     "migration:show": "npm run typeorm migration:show -- -d ./src/database/cli/dataSource.ts",
     "migrate:latest:prod": "npm run migration:run",
-    "prod": "npm run migrate:latest:prod && npm run start",
+    "prod": "npm run migration:run && npm run start",
     "start": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./loader.js\", pathToFileURL(\"./\"));' ./dist/index.js",
     "start:tsx": "tsx src",
     "test": "npm run test:mem",
