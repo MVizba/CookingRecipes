@@ -66,6 +66,7 @@ const config = schema.parse({
     host: env.DB_HOST,
     port: env.DB_PORT,
     database: env.DB_NAME,
+    extra: { options: env.ENDPOINT_ID },
     username: env.DB_USER,
     password: env.DB_PASSWORD,
     ssl: env.DB_SSL,

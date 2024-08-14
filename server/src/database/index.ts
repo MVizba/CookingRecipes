@@ -5,7 +5,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 import { DataType, newDb } from 'pg-mem'
 import * as entities from '../entities'
 
-// same as DataSourceOptions, but allowsnnnn for 'pg-mem' type
+// same as DataSourceOptions, but allows for 'pg-mem' type
 type DatabaseOptions = Partial<DataSourceOptions> | { type: 'pg-mem' }
 
 export function createDatabase(options: DatabaseOptions) {
