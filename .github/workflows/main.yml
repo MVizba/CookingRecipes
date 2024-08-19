@@ -52,10 +52,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Start server for E2E tests
-        run: |
-          npm run dev -w=server &
-          sleep 15  # Wait for the server to start
-          ss -tlnp  # Check if the server is listening on the expected port
+        run: npm run dev -w=server &
 
       - name: Build front end for E2E tests
         run: npm run build -w=client
@@ -63,9 +60,9 @@ jobs:
       - name: Wait for server to startup
         uses: Jtalk/url-health-check-action@v4
         with:
-          max-attempts: 10
-          retry-delay: 10s
-          url: ${{ env.VITE_API_ORIGIN }}/api/health
+          max-attempts: 5
+          retry-delay: 5s
+          url: http://localhost:3000/api/health
 
       - name: Test client E2E
         run: npm run test:e2e -w=client
