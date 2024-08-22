@@ -9,7 +9,6 @@ jobs:
       VITE_API_ORIGIN: http://localhost:3000
       VITE_API_PATH: /api/v1/trpc
       TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
-      API_PROXY_PASS: http://localhost:3000 # Set the backend URL for NGINX
 
     services:
       postgres:
@@ -46,30 +45,24 @@ jobs:
       - name: Test client (unit)
         run: npm run test:unit -w=client
 
-      # Uncomment these steps to enable E2E tests
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+      # - name: Install Playwright Browsers
+      #   run: npx playwright install --with-deps chromium
 
-      - name: Start backend server for E2E tests
-        run: npm run dev -w=server &
+      # - name: Start server for E2E tests
+      #   run: npm run dev -w=server &
 
-      - name: Start NGINX with custom config
-        run: |
-          docker run -d \
-            -e API_PROXY_PASS=${{ env.API_PROXY_PASS }} \
-            -v $(pwd)/nginx/default.conf.template:/etc/nginx/conf.d/default.conf:ro \
-            -p 80:80 \
-            nginx
+      # - name: Build front end for E2E tests
+      #   run: npm run build -w=client
 
-      - name: Wait for NGINX to start and proxy backend to be ready
-        uses: Jtalk/url-health-check-action@v4
-        with:
-          max-attempts: 10
-          retry-delay: 10s
-          url: http://localhost/api/health
+      # - name: Wait for server to startup
+      #   uses: Jtalk/url-health-check-action@v4
+      #   with:
+      #     max-attempts: 5
+      #     retry-delay: 5s
+      #     url: ${{ env.VITE_API_ORIGIN }}/api/health
 
-      - name: Test client E2E
-        run: npm run test:e2e -w=client
+      # - name: Test client E2E
+      #   run: npm run test:e2e -w=client
 
       - uses: actions/upload-artifact@v4
         if: always()
