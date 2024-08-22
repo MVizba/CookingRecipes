@@ -46,6 +46,7 @@ jobs:
       - name: Test client (unit)
         run: npm run test:unit -w=client
 
+      # Uncomment these steps to enable E2E tests
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 
