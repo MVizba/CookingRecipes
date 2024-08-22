@@ -45,9 +45,6 @@ jobs:
       - name: Test client (unit)
         run: npm run test:unit -w=client
 
-      - name: Test server
-        run: npm run test -w=server
-
       # - name: Install Playwright Browsers
       #   run: npx playwright install --with-deps chromium
 

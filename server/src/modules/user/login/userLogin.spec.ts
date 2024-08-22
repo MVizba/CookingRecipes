@@ -1,5 +1,6 @@
 import { createCallerFactory } from '@server/trpc'
 import userRouter from '..'
+// eslint-disable-next-line import/order, @typescript-eslint/no-unused-vars
 import jwt from 'jsonwebtoken'
 
 process.env.TOKEN_KEY = process.env.TOKEN_KEY || 'supersecretkey'
