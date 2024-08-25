@@ -7,7 +7,7 @@ const { email, password } = fakeUser()
 // We are grouping these tests in a serial block to clearly
 // indicate that these tests should be run in the provided order.
 // However, ideally we would like to run each test in isolation.
-// That would allow us to develop faster and to see more clearly
+// That would allow us to develop faster and to see more clearlydfvfjdfjdfjdfjdfjdfgfjdfgf
 // which part of our flow is broken.
 // In this particular case, we might want to run the signup and
 // login tests one after the other because we want to make sure
